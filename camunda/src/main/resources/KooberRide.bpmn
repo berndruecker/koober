@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:camunda="http://camunda.org/schema/1.0/bpmn" id="Definitions_1" targetNamespace="http://bpmn.io/schema/bpmn" exporter="Camunda Modeler" exporterVersion="1.6.0">
+  <bpmn:process id="KooberRide" name="Koober Ride" isExecutable="true">
+    <bpmn:sequenceFlow id="SequenceFlow_0km4x53" sourceRef="Task_0b77ggj" targetRef="Task_080hy0x" />
+    <bpmn:endEvent id="EndEvent_0wqx838" name="Ride completed and billed">
+      <bpmn:incoming>SequenceFlow_0ij283u</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:sequenceFlow id="SequenceFlow_0ij283u" sourceRef="Task_080hy0x" targetRef="EndEvent_0wqx838" />
+    <bpmn:startEvent id="StartEvent_1vkqfvi" name="Ride requested">
+      <bpmn:outgoing>SequenceFlow_0kh9puo</bpmn:outgoing>
+    </bpmn:startEvent>
+    <bpmn:sequenceFlow id="SequenceFlow_0kh9puo" sourceRef="StartEvent_1vkqfvi" targetRef="Task_16gxz2t" />
+    <bpmn:receiveTask id="Task_16gxz2t" name="Driver picked up rider" messageRef="Message_0atxz3u">
+      <bpmn:incoming>SequenceFlow_0kh9puo</bpmn:incoming>
+      <bpmn:outgoing>SequenceFlow_090w644</bpmn:outgoing>
+    </bpmn:receiveTask>
+    <bpmn:sequenceFlow id="SequenceFlow_090w644" sourceRef="Task_16gxz2t" targetRef="Task_0b77ggj" />
+    <bpmn:callActivity id="Task_0b77ggj" name="Collect payment from driver" calledElement="KooberMoneyCollection">
+      <bpmn:extensionElements>
+        <camunda:in businessKey="#{execution.processBusinessKey}" />
+        <camunda:in variables="all" />
+        <camunda:out variables="all" />
+      </bpmn:extensionElements>
+      <bpmn:incoming>SequenceFlow_090w644</bpmn:incoming>
+      <bpmn:outgoing>SequenceFlow_0km4x53</bpmn:outgoing>
+    </bpmn:callActivity>
+    <bpmn:scriptTask id="Task_080hy0x" name="Send money to driver" scriptFormat="javascript">
+      <bpmn:incoming>SequenceFlow_0km4x53</bpmn:incoming>
+      <bpmn:outgoing>SequenceFlow_0ij283u</bpmn:outgoing>
+      <bpmn:script><![CDATA[java.lang.System.out.println(" Hooray - rider payed. Now let's transfer some money to keep our drivers happy" );]]></bpmn:script>
+    </bpmn:scriptTask>
+    <bpmn:textAnnotation id="TextAnnotation_14hb08f">    <bpmn:text>Currently sysout only</bpmn:text>
+</bpmn:textAnnotation>
+    <bpmn:association id="Association_00n6pxg" sourceRef="Task_080hy0x" targetRef="TextAnnotation_14hb08f" />
+  </bpmn:process>
+  <bpmn:message id="Message_0atxz3u" name="Msg_DriverPickedUpRider" />
+  <bpmndi:BPMNDiagram id="BPMNDiagram_1">
+    <bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="KooberRide">
+      <bpmndi:BPMNEdge id="SequenceFlow_0km4x53_di" bpmnElement="SequenceFlow_0km4x53">
+        <di:waypoint xsi:type="dc:Point" x="391" y="67" />
+        <di:waypoint xsi:type="dc:Point" x="439" y="67" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="415" y="52" width="0" height="0" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="EndEvent_0wqx838_di" bpmnElement="EndEvent_0wqx838">
+        <dc:Bounds x="604" y="49" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="583" y="85" width="78" height="24" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="SequenceFlow_0ij283u_di" bpmnElement="SequenceFlow_0ij283u">
+        <di:waypoint xsi:type="dc:Point" x="539" y="67" />
+        <di:waypoint xsi:type="dc:Point" x="604" y="67" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="572" y="52" width="0" height="0" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="StartEvent_1vkqfvi_di" bpmnElement="StartEvent_1vkqfvi">
+        <dc:Bounds x="51" y="49" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="32" y="85" width="74" height="12" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="SequenceFlow_0kh9puo_di" bpmnElement="SequenceFlow_0kh9puo">
+        <di:waypoint xsi:type="dc:Point" x="87" y="67" />
+        <di:waypoint xsi:type="dc:Point" x="140" y="67" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="114" y="52" width="0" height="0" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="ReceiveTask_1aspuxo_di" bpmnElement="Task_16gxz2t">
+        <dc:Bounds x="140" y="27" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="SequenceFlow_090w644_di" bpmnElement="SequenceFlow_090w644">
+        <di:waypoint xsi:type="dc:Point" x="240" y="67" />
+        <di:waypoint xsi:type="dc:Point" x="291" y="67" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="266" y="52" width="0" height="0" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="TextAnnotation_14hb08f_di" bpmnElement="TextAnnotation_14hb08f">
+        <dc:Bounds x="502" y="137" width="100" height="30" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="Association_00n6pxg_di" bpmnElement="Association_00n6pxg">
+        <di:waypoint xsi:type="dc:Point" x="519" y="107" />
+        <di:waypoint xsi:type="dc:Point" x="541" y="137" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="CallActivity_17fawfk_di" bpmnElement="Task_0b77ggj">
+        <dc:Bounds x="291" y="27" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="ScriptTask_1as22v4_di" bpmnElement="Task_080hy0x">
+        <dc:Bounds x="439" y="27" width="100" height="80" />
+      </bpmndi:BPMNShape>
+    </bpmndi:BPMNPlane>
+  </bpmndi:BPMNDiagram>
+</bpmn:definitions>

@@ -33,3 +33,16 @@ Start the Spark Streaming process:
 
 1. `./sbt kafkaToCassandra/run`
 1. Watch all of the ride data be micro-batched from Kafka to Cassandra
+
+
+Start the Camunda workflow engine:
+
+1. `./sbt camunda/run`
+1. On the console you see that new rider requests start a process instance and driver pickups trigger the billing.
+
+You can also start the Camunda Webapplication to use Cockpit to inspect what's going on. Therefor you need Maven installed:
+1. `./mvn -f camunda-webapp/ spring-boot:run`
+1. Open your browser at [http://localhost:9001/](http://localhost:9001/)
+1. Login with `demo`/`demo`
+1. Check [Cockpit](http://localhost:9001/app/cockpit/) for the `Koober Rider` process when a rider requested a ride and the driver has not yet picked up. You will see a running process instance.
+1. Every third ride a payment failure is simulated and a Human Task is created. You can see them via the [Tasklist](http://localhost:9001/app/tasklist/).

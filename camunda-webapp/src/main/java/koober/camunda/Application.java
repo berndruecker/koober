@@ -7,6 +7,7 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
+import com.camunda.consulting.util.FilterGenerator;
 import com.camunda.consulting.util.LicenseHelper;
 import com.camunda.consulting.util.UserGenerator;
 
@@ -22,6 +23,7 @@ public class Application  {
     ProcessEngine engine = BpmPlatform.getDefaultProcessEngine();    
     LicenseHelper.setLicense(engine);
     UserGenerator.createDefaultUsers(engine);
+    UserGenerator.addFilterUserAuthorization(engine, "demo", FilterGenerator.FILTER_allTasksFilter);
   }
 
 }

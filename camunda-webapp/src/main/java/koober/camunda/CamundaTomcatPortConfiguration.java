@@ -9,7 +9,7 @@ public class CamundaTomcatPortConfiguration {
     @Bean
     public EmbeddedServletContainerCustomizer containerCustomizer() {
         return (container -> {
-            container.setPort(8090);
+            container.setPort(9001);
         });
     }
 }

@@ -62,54 +62,46 @@ object CamundaApp extends App {
         val riderRecords = allRecords.records("rider");
         for (record <- riderRecords) {
           val json = Json.parse(record.value);
-          val riderOption : Option[String] = (json \ "rider").asOpt[String];
-          
-//          val rider : String = 
-//            if (riderOption == None) null else riderOption.get
-          
-          if (riderOption != None) {
-            val rider = riderOption.get
+          val rider: Option[String] = (json \ "rider").asOpt[String];
+          if (rider != None) {
             val alreadyRunningCount = engine.getHistoryService.createHistoricProcessInstanceQuery
-              .variableValueEquals("rider", rider)
+              .variableValueEquals("rider", rider.get)
               .count();
             if (alreadyRunningCount == 0) {
               engine.getRuntimeService.startProcessInstanceByKey("KooberRide",
-                Variables.createVariables().putValue("rider", rider))
-              println("Start Camunda process instance for rider " + rider); 
-            }
-          }
-          
-          val driverRecords = allRecords.records("driver");
-          for (record <- driverRecords) {
-            val json = Json.parse(record.value);
-
-            val rider = (json \ "rider").asOpt[String];
-            val driver = (json \ "driver").asOpt[String];
-            val status = (json \ "status").asOpt[String];
-            
-//            print(status)
-
-            // Status changed to pickup -> send message to process (if existing)
-            if (status!= None && rider!=None && driver != None 
-                && status.get.equals("pickup")) {
-              
-              val waitingForPickupCount = engine.getRuntimeService.createExecutionQuery
-                .messageEventSubscriptionName("Msg_DriverPickedUpRider")
-                .processVariableValueEquals("rider", rider.get)
-                .count();
-//              println("pickup for rider "+rider.get+": " + waitingForPickupCount)
-              
-              if (waitingForPickupCount > 0) {
-                engine.getRuntimeService.createMessageCorrelation("Msg_DriverPickedUpRider")
-                  .processInstanceVariableEquals("rider", rider.get)
-                  .setVariable("driver", driver.get)
-                  .correlateAllWithResult()
-                println("Correlate pick up message to waiting process instance for rider " + rider.get);
-              }
-
+                Variables.createVariables().putValue("rider", rider.get))
+              println("Start Camunda process instance for rider " + rider.get);
             }
           }
         }
+
+        val driverRecords = allRecords.records("driver");
+        for (record <- driverRecords) {
+          val json = Json.parse(record.value);
+          val rider = (json \ "rider").asOpt[String];
+          val driver = (json \ "driver").asOpt[String];
+          val status = (json \ "status").asOpt[String];
+
+          // Status changed to pickup -> send message to process (if existing)
+          if (status != None && rider != None && driver != None
+            && status.get.equals("pickup")) {
+
+            val waitingForPickupCount = engine.getRuntimeService.createExecutionQuery
+              .messageEventSubscriptionName("Msg_DriverPickedUpRider")
+              .processVariableValueEquals("rider", rider.get)
+              .count();
+
+            if (waitingForPickupCount > 0) {
+              engine.getRuntimeService.createMessageCorrelation("Msg_DriverPickedUpRider")
+                .processInstanceVariableEquals("rider", rider.get)
+                .setVariable("driver", driver.get)
+                .correlateAllWithResult()
+              println("Correlate pick up message to waiting process instance for rider " + rider.get);
+            }
+
+          }
+        }
+
       }
     }
   });

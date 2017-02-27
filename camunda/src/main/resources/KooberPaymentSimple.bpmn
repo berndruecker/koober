@@ -6,7 +6,7 @@
       <bpmn:incoming>SequenceFlow_13jm6ki</bpmn:incoming>
       <bpmn:outgoing>SequenceFlow_1xuctn2</bpmn:outgoing>
     </bpmn:serviceTask>
-    <bpmn:userTask id="UserTask_1lwn028" name="Handle payment manually">
+    <bpmn:userTask id="UserTask_1lwn028" name="Handle payment manually" camunda:asyncAfter="true">
       <bpmn:extensionElements>
         <camunda:formData>
           <camunda:formField id="driver" label="Driver" type="string" />
